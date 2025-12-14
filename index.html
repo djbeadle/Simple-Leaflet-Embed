@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <style>
+        #map { width: 100%; height: 100%; }
+        html, body {
+            margin:0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+        <script>
+            // Get URL search params
+            const paramsString = window.location.search;
+            const searchParams = new URLSearchParams(paramsString);
+
+            markers_raw = searchParams.getAll("m")
+            markers = markers_raw.map(x => x.split(','))
+
+            // console.log(markers)
+
+            // Render map
+            var map = L.map('map').setView([51.505, -0.09], 13);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            // Add each market to the map with a tooltip for the labels
+            markers.forEach(x => {
+                m = L.marker([x[1], x[2]])
+                m.bindTooltip(x[0])
+                m.addTo(map);
+            })
+
+            // Zoom map to fit all the markers
+            map.fitBounds(L.latLngBounds(markers.map(x => [x[1], x[2]])).pad(0.5));
+    </script>
+</body>
+</html>
